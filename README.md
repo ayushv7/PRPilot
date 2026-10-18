@@ -81,6 +81,15 @@ All tools accept a validated input schema: `{ owner: string, repo: string, pull_
 
 ---
 
+## MCP Resources & Prompts
+
+In addition to tools, PRPilot implements the full MCP specification with native resources and prompts:
+
+- **Resource `prpilot://heuristics/catalog`:** Exposes the reference catalog of heuristic risk codes, severities, and boundary detection rules.
+- **Prompt `review_pull_request`:** A pre-configured instruction template for AI agents accepting `{ owner, repo, pull_number }` to drive an evidence-backed pull request review.
+
+---
+
 ## Review Dossier Widget
 
 Built with `@nitrostack/widgets` using Next.js and React:

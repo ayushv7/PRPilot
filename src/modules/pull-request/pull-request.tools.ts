@@ -3,7 +3,14 @@
  * Exposes 5 focused tools with validated input schemas and source-backed evidence.
  */
 
-import { ExecutionContext, ToolDecorator as Tool, Widget, z } from '@nitrostack/core';
+import {
+  ExecutionContext,
+  PromptDecorator as Prompt,
+  ResourceDecorator as Resource,
+  ToolDecorator as Tool,
+  Widget,
+  z,
+} from '@nitrostack/core';
 import { DossierService } from './dossier.service.js';
 import { GitHubService } from './github.service.js';
 import { HeuristicsService } from './heuristics.service.js';
@@ -548,5 +555,93 @@ export class PullRequestTools {
     };
 
     return this.dossier.assembleDossier(pr, changeMap, verification, linkedContext);
+  }
+
+  // --------------------------------------------------------------------------
+  // Resource: prpilot://heuristics/catalog
+  // --------------------------------------------------------------------------
+  @Resource({
+    uri: 'prpilot://heuristics/catalog',
+    name: 'Investigation Signal Catalog',
+    description: 'Reference catalog of heuristic risk signals and inspection rules used by PRPilot.',
+    mimeType: 'application/json',
+  })
+  async getHeuristicCatalog(ctx: ExecutionContext) {
+    ctx.logger.info('Reading heuristic signal catalog');
+    return [
+      {
+        code: 'SIG_AUTH_SECURITY',
+        severity: 'high',
+        title: 'Authentication & Security Boundary Modified',
+        criteria: 'Changes touch authentication, credential handling, token creation, or crypto libraries.',
+      },
+      {
+        code: 'SIG_DB_MIGRATION',
+        severity: 'high',
+        title: 'Database Schema or Migration Modified',
+        criteria: 'Changes touch database migrations, SQL schemas, or ORM models.',
+      },
+      {
+        code: 'SIG_CONFIG_ENV',
+        severity: 'medium',
+        title: 'Runtime Configuration / Environment Altered',
+        criteria: 'Changes modify .env templates, Docker configs, or runtime configs.',
+      },
+      {
+        code: 'SIG_DEPENDENCY_CHANGE',
+        severity: 'medium',
+        title: 'Third-Party Dependency Manifest Changed',
+        criteria: 'Changes touch package.json, cargo.toml, requirements.txt, or go.mod.',
+      },
+      {
+        code: 'SIG_INPUT_VALIDATION',
+        severity: 'medium',
+        title: 'Input Validation / Endpoint Layer Touched',
+        criteria: 'Changes touch validation schemas, sanitize routines, or controllers.',
+      },
+      {
+        code: 'SIG_UNTESTED_LOGIC',
+        severity: 'high',
+        title: 'Application Logic Modified Without Tests',
+        criteria: 'Two or more application logic files changed without any accompanying test files.',
+      },
+      {
+        code: 'SIG_HIGH_CHURN',
+        severity: 'medium',
+        title: 'High-Volume Diff (Review Fatigue Risk)',
+        criteria: 'Pull request exceeds 500 line changes or modifies 15 or more files.',
+      },
+    ];
+  }
+
+  // --------------------------------------------------------------------------
+  // Prompt: review_pull_request
+  // --------------------------------------------------------------------------
+  @Prompt({
+    name: 'review_pull_request',
+    description:
+      'Guided prompt for an AI agent to conduct an evidence-driven code review of a GitHub pull request using PRPilot tools.',
+    arguments: [
+      { name: 'owner', description: 'GitHub repository owner or organization (e.g. "facebook")', required: true },
+      { name: 'repo', description: 'GitHub repository name (e.g. "react")', required: true },
+      { name: 'pull_number', description: 'Pull request number (e.g. 31000)', required: true },
+    ],
+  })
+  async getReviewPrompt(
+    args: { owner: string; repo: string; pull_number: string | number },
+    ctx: ExecutionContext
+  ) {
+    ctx.logger.info('Generating review_pull_request prompt', { args });
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Investigate ${args.owner}/${args.repo} pull request #${args.pull_number}. Build the Review Dossier, explain which changes need the most careful human review, check the actual CI evidence, trace explicit related issues, and give me a prioritized review route. Cite the evidence for every important finding and tell me what you could not verify.`,
+          },
+        },
+      ],
+    };
   }
 }

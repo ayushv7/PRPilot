@@ -101,3 +101,28 @@ test('PullRequestTools: assembleReviewDossier builds full review dossier', async
   assert.equal(dossier.linked_context.explicit_issue_references[0].number, 42);
   assert.equal(dossier.linked_context.explicit_issue_references[0].title, 'Token expires prematurely');
 });
+
+test('PullRequestTools: getHeuristicCatalog returns reference catalog resource', async () => {
+  const tools = new PullRequestTools();
+  const mockCtx = { logger: { info: () => {}, error: () => {}, warn: () => {} } } as any;
+  const catalog = await tools.getHeuristicCatalog(mockCtx);
+
+  assert.ok(Array.isArray(catalog), 'Catalog should be an array');
+  assert.ok(catalog.length >= 7, 'Catalog should contain all 7 core signals');
+  assert.ok(catalog.some((c) => c.code === 'SIG_AUTH_SECURITY'));
+  assert.ok(catalog.some((c) => c.code === 'SIG_UNTESTED_LOGIC'));
+});
+
+test('PullRequestTools: getReviewPrompt returns structured MCP prompt template', async () => {
+  const tools = new PullRequestTools();
+  const mockCtx = { logger: { info: () => {}, error: () => {}, warn: () => {} } } as any;
+  const promptResult = await tools.getReviewPrompt(
+    { owner: 'facebook', repo: 'react', pull_number: 31000 },
+    mockCtx
+  );
+
+  assert.ok(promptResult.messages && promptResult.messages.length > 0);
+  assert.equal(promptResult.messages[0].role, 'user');
+  assert.match(promptResult.messages[0].content.text, /facebook\/react/);
+  assert.match(promptResult.messages[0].content.text, /31000/);
+});
