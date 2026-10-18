@@ -55,3 +55,7 @@ uploads/
 *.pem
 *.key
 tokens.json
+
+# Archives
+*.zip
+
