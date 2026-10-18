@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWidgetSDK, useTheme } from '@nitrostack/widgets';
 
 // Data types aligned with ReviewDossier schema
@@ -140,8 +140,8 @@ const PREVIEW_FALLBACK_DATA: DossierData = {
     base_branch: 'master',
     head_branch: 'feat/review-dossier',
     head_sha: '749ee62881a9ef3b8c19a9d7010f3bc30f9a2e1d',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: '2026-10-18T12:00:00.000Z',
+    updated_at: '2026-10-18T12:05:00.000Z',
     changed_files_count: 8,
     additions: 450,
     deletions: 32,
@@ -181,7 +181,7 @@ const PREVIEW_FALLBACK_DATA: DossierData = {
   ],
   verification: {
     head_sha: '749ee62881a9ef3b8c19a9d7010f3bc30f9a2e1d',
-    collected_at: new Date().toISOString(),
+    collected_at: '2026-10-18T12:05:00.000Z',
     summary: {
       total: 3,
       passing: 3,
@@ -293,6 +293,15 @@ export default function ReviewDossierWidget() {
   const { isReady, getToolOutput } = useWidgetSDK();
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'route' | 'signals' | 'verification' | 'ledger'>('route');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, []);
 
   // Pull actual data from tool execution or fall back to preview data
   const rawData = isReady ? getToolOutput<DossierData>() : null;
@@ -342,12 +351,16 @@ export default function ReviewDossierWidget() {
 
   return (
     <div
+      suppressHydrationWarning
       style={{
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
         backgroundColor: colors.bg,
         color: colors.textPrimary,
         minHeight: '100vh',
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'hidden',
         padding: '24px 28px',
         boxSizing: 'border-box',
       }}
@@ -1018,7 +1031,9 @@ export default function ReviewDossierWidget() {
         }}
       >
         <span>PRPilot v1.0.0 · Powered by NitroStack MCP</span>
-        <span>Assembled at {data.verification?.collected_at ? new Date(data.verification.collected_at).toLocaleTimeString() : 'N/A'}</span>
+        <span suppressHydrationWarning>
+          Assembled at {mounted && data.verification?.collected_at ? new Date(data.verification.collected_at).toLocaleTimeString() : '12:05:00 PM'}
+        </span>
       </div>
     </div>
   );
