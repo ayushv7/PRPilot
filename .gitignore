@@ -59,3 +59,5 @@ tokens.json
 # Archives
 *.zip
 
+# Added by nitrostack pack
+.git/
