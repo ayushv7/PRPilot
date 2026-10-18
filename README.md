@@ -53,20 +53,20 @@ PRPilot is an MCP server built for code review workflows. Learn more about build
 
 ## Features
 
-- 🔌 **MCP-Native:** Works seamlessly with any MCP-compatible client (Claude Desktop, Cursor, NitroStudio, ChatGPT).
-- 🛠️ **5 Granular Tools + Resource + Prompt:** Exposes dedicated tools for metadata, file mapping, CI evidence, and full dossier synthesis.
-- 📊 **Interactive Next.js Widget:** Renders an editorial charcoal Review Dossier UI directly in supporting canvases.
-- 🛡️ **Zero-Hallucination Integrity:** Distinguishes verified facts from heuristics and explicitly reports missing data.
-- ⚡ **Live on NitroCloud:** Hosted, production-ready, and instantly shareable.
-- 🔐 **Secure by Design:** Read-only analysis; credentials stay safely in environment variables.
+-  **MCP-Native:** Works seamlessly with any MCP-compatible client (Claude Desktop, Cursor, NitroStudio, ChatGPT).
+-  **5 Granular Tools + Resource + Prompt:** Exposes dedicated tools for metadata, file mapping, CI evidence, and full dossier synthesis.
+-  **Interactive Next.js Widget:** Renders an editorial charcoal Review Dossier UI directly in supporting canvases.
+-  **Zero-Hallucination Integrity:** Distinguishes verified facts from heuristics and explicitly reports missing data.
+-  **Live on NitroCloud:** Hosted, production-ready, and instantly shareable.
+-  **Secure by Design:** Read-only analysis; credentials stay safely in environment variables.
 
 ---
 
 ## Live Demo
 
-- 🚀 **Live MCP SSE Endpoint:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse)
-- 🌐 **Live Documentation & Server:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/)
-- 🎨 **Local Interactive Widget:** [`http://localhost:3001/review-dossier`](http://localhost:3001/review-dossier)
+-  **Live MCP SSE Endpoint:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse)
+-  **Live Documentation & Server:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/)
+-  **Local Interactive Widget:** [`http://localhost:3001/review-dossier`](http://localhost:3001/review-dossier)
 
 Point your MCP client at the SSE endpoint above to try it instantly without local installation!
 
@@ -178,14 +178,14 @@ All 16 unit and smoke tests execute with `tsx --test`.
 
 Want to build and ship an MCP server like this one? [NitroStack](https://nitrostack.ai) lets you create, deploy, and host MCP apps in minutes — no infrastructure to manage.
 
-👉 **Start building:** [https://nitrostack.ai](https://nitrostack.ai)
+**Start building:** [https://nitrostack.ai](https://nitrostack.ai)
 
 ---
 
 ## Explore More MCP Apps
 
-- 🌙 **Discover & share:** Join the community on [r/mcptothemoon](https://www.reddit.com/r/mcptothemoon/)
-- 🧰 **Browse the catalog:** Explore more apps on [NitroStack Apps](https://nitrostack.ai/apps)
+- **Discover & share:** Join the community on [r/mcptothemoon](https://www.reddit.com/r/mcptothemoon/)
+- **Browse the catalog:** Explore more apps on [NitroStack Apps](https://nitrostack.ai/apps)
 
 ---
 
@@ -216,4 +216,4 @@ PRPilot · MCP · Model Context Protocol · MCP server · MCP app · AI tools ·
 
 ## License
 
-[MIT](LICENSE) © 2026 Ayush Verma ([ayushv7](https://github.com/ayushv7))
+[MIT](LICENSE) © 2026 Ayush ([ayushv7](https://github.com/ayushv7))
