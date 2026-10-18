@@ -147,21 +147,23 @@ export class DossierService {
     let overall_status: VerificationEvidence['summary']['overall_status'] = 'no_checks_found';
     let honestAssessment = '';
 
+    const shortSha = headSha ? headSha.slice(0, 7) : 'unknown';
+
     if (checks.length === 0) {
       overall_status = 'no_checks_found';
-      honestAssessment = `⚠️ No CI checks or status checks were found for commit ${headSha.slice(0, 7)}. Do not assume tests pass without verified CI automation.`;
+      honestAssessment = `No CI checks or status checks were found for commit ${shortSha}. Do not assume tests pass without verified CI automation.`;
     } else if (failing > 0) {
       overall_status = 'failing';
-      honestAssessment = `❌ ${failing} check(s) failed on commit ${headSha.slice(0, 7)}. Human reviewer must inspect failure logs before merge.`;
+      honestAssessment = `${failing} check(s) failed on commit ${shortSha}. Human reviewer must inspect failure logs before merge.`;
     } else if (pending > 0) {
       overall_status = 'pending';
-      honestAssessment = `⏳ ${pending} check(s) are still pending/in-progress on commit ${headSha.slice(0, 7)}. Final review requires check completion.`;
+      honestAssessment = `${pending} check(s) are still pending/in-progress on commit ${shortSha}. Final review requires check completion.`;
     } else if (passing === checks.length) {
       overall_status = 'passing';
-      honestAssessment = `✅ All ${passing} retrieved CI check(s) passed on commit ${headSha.slice(0, 7)}.`;
+      honestAssessment = `All ${passing} retrieved CI check(s) passed on commit ${shortSha}.`;
     } else {
       overall_status = 'mixed';
-      honestAssessment = `ℹ️ ${passing} passing, ${skipped} skipped/neutral out of ${checks.length} checks.`;
+      honestAssessment = `${passing} passing, ${skipped} skipped/neutral out of ${checks.length} checks.`;
     }
 
     return {

@@ -188,7 +188,7 @@ export class PullRequestTools {
             completed_at: '2026-10-17T23:29:00.000Z',
           },
         ],
-        honest_assessment: '✅ All 1 retrieved CI check(s) passed on commit 749ee62.',
+        honest_assessment: 'All 1 retrieved CI check(s) passed on commit 749ee62.',
       },
     },
   })
@@ -218,7 +218,7 @@ export class PullRequestTools {
           overall_status: 'no_checks_found',
         },
         checks: [],
-        honest_assessment: '⚠️ Pull request head SHA is unavailable.',
+        honest_assessment: 'Pull request head SHA is unavailable.',
       };
     }
 
@@ -407,7 +407,7 @@ export class PullRequestTools {
               completed_at: '2026-10-17T23:29:00.000Z',
             },
           ],
-          honest_assessment: '✅ All 1 retrieved CI check(s) passed on commit 749ee62.',
+          honest_assessment: 'All 1 retrieved CI check(s) passed on commit 749ee62.',
         },
         linked_context: {
           explicit_issue_references: [],
@@ -499,7 +499,7 @@ export class PullRequestTools {
           overall_status: 'no_checks_found',
         },
         checks: [],
-        honest_assessment: '⚠️ Pull request head SHA is unavailable.',
+        honest_assessment: 'Pull request head SHA is unavailable.',
       };
     }
 

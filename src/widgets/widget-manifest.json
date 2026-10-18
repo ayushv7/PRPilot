@@ -57,7 +57,7 @@
               "head_sha": "749ee62881a9ef3b8c19a9d7010f3bc30f9a2e1d",
               "collected_at": "2026-10-17T23:35:00.000Z",
               "summary": {
-                "total: 2": 2,
+                "total": 2,
                 "passing": 2,
                 "failing": 0,
                 "pending": 0,
@@ -73,7 +73,7 @@
                   "details_url": "https://github.com/ayushv7/PRPilot/actions"
                 }
               ],
-              "honest_assessment": "✅ All 2 retrieved CI check(s) passed on commit 749ee62."
+              "honest_assessment": "All 2 retrieved CI check(s) passed on commit 749ee62."
             },
             "linked_context": {
               "explicit_issue_references": [

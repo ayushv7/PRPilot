@@ -3,10 +3,7 @@ import { PullRequestModule } from './modules/pull-request/pull-request.module.js
 import { SystemHealthCheck } from './health/system.health.js';
 
 /**
- * Root Application Module
- * 
- * This is the main module that bootstraps the MCP server.
- * It registers all feature modules and health checks.
+ * Root Application Module for PRPilot
  */
 @McpApp({
   module: AppModule,

@@ -213,7 +213,7 @@ const PREVIEW_FALLBACK_DATA: DossierData = {
         details_url: 'https://github.com/ayushv7/PRPilot/actions',
       },
     ],
-    honest_assessment: '✅ All 3 retrieved CI check(s) passed on commit 749ee62.',
+    honest_assessment: 'All 3 retrieved CI check(s) passed on commit 749ee62.',
   },
   linked_context: {
     explicit_issue_references: [
@@ -261,7 +261,7 @@ const PREVIEW_FALLBACK_DATA: DossierData = {
       title: 'Verify CI & Check Runs',
       target_paths: ['GitHub Actions / CI Logs'],
       what_to_look_for: 'Confirm all 3 checks passed on head commit 749ee62.',
-      evidence_source: '✅ All 3 retrieved CI check(s) passed on commit 749ee62.',
+      evidence_source: 'All 3 retrieved CI check(s) passed on commit 749ee62.',
     },
   ],
   evidence_coverage: {
@@ -435,7 +435,7 @@ export default function ReviewDossierWidget() {
               Branch: <code style={{ color: colors.blueText }}>{data.pr.head_branch}</code> → <code style={{ color: colors.textPrimary }}>{data.pr.base_branch}</code>
             </span>
             <span>
-              Commit: <code style={{ color: colors.textSecondary }}>{data.pr.head_sha.slice(0, 7)}</code>
+              Commit: <code style={{ color: colors.textSecondary }}>{(data.pr?.head_sha || '').slice(0, 7) || 'unknown'}</code>
             </span>
           </div>
         </div>
@@ -524,13 +524,13 @@ export default function ReviewDossierWidget() {
           <div>
             <div style={{ fontSize: '11px', color: colors.textMuted }}>App Logic Files</div>
             <div style={{ fontSize: '18px', fontWeight: 700, color: colors.blueText }}>
-              {data.change_map_summary.category_counts.application_logic || 0}
+              {data.change_map_summary.category_counts?.application_logic || 0}
             </div>
           </div>
           <div>
             <div style={{ fontSize: '11px', color: colors.textMuted }}>Test Files</div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: data.change_map_summary.category_counts.tests > 0 ? colors.emeraldText : colors.roseText }}>
-              {data.change_map_summary.category_counts.tests || 0}
+            <div style={{ fontSize: '18px', fontWeight: 700, color: (data.change_map_summary.category_counts?.tests || 0) > 0 ? colors.emeraldText : colors.roseText }}>
+              {data.change_map_summary.category_counts?.tests || 0}
             </div>
           </div>
           <div>
@@ -589,6 +589,8 @@ export default function ReviewDossierWidget() {
 
       {/* Tab Navigation */}
       <div
+        role="tablist"
+        aria-label="Review Dossier Sections"
         style={{
           display: 'flex',
           gap: '8px',
@@ -605,11 +607,16 @@ export default function ReviewDossierWidget() {
         ].map((tab) => (
           <button
             key={tab.id}
+            id={`tab-${tab.id}`}
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            aria-controls={`panel-${tab.id}`}
             onClick={() => setActiveTab(tab.id as any)}
             style={{
               backgroundColor: activeTab === tab.id ? colors.surfaceSubtle : 'transparent',
               color: activeTab === tab.id ? colors.textPrimary : colors.textSecondary,
               border: activeTab === tab.id ? `1px solid ${colors.border}` : '1px solid transparent',
+              borderBottom: activeTab === tab.id ? `2px solid ${colors.blueText}` : '1px solid transparent',
               borderRadius: '6px',
               padding: '6px 14px',
               fontSize: '12px',
@@ -625,7 +632,12 @@ export default function ReviewDossierWidget() {
 
       {/* Tab 1: Reviewer Route */}
       {activeTab === 'route' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div
+          id="panel-route"
+          role="tabpanel"
+          aria-labelledby="tab-route"
+          style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+        >
           {data.reviewer_route.map((step) => (
             <div
               key={step.step_number}
@@ -699,7 +711,12 @@ export default function ReviewDossierWidget() {
 
       {/* Tab 2: Investigation Signals */}
       {activeTab === 'signals' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div
+          id="panel-signals"
+          role="tabpanel"
+          aria-labelledby="tab-signals"
+          style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+        >
           {data.review_signals.length === 0 ? (
             <div
               style={{
@@ -712,7 +729,7 @@ export default function ReviewDossierWidget() {
                 fontSize: '13px',
               }}
             >
-              ✅ No high or medium risk heuristic signals triggered. Standard review applies.
+              No elevated investigation signals detected. Standard review guidelines apply.
             </div>
           ) : (
             data.review_signals.map((sig, idx) => (
@@ -781,7 +798,12 @@ export default function ReviewDossierWidget() {
 
       {/* Tab 3: CI & Checks */}
       {activeTab === 'verification' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div
+          id="panel-verification"
+          role="tabpanel"
+          aria-labelledby="tab-verification"
+          style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+        >
           {data.verification.checks.length === 0 ? (
             <div
               style={{
@@ -794,7 +816,7 @@ export default function ReviewDossierWidget() {
                 fontSize: '13px',
               }}
             >
-              ⚠️ No CI checks reported by GitHub API for commit <code>{data.verification.head_sha.slice(0, 7)}</code>.
+              No CI checks reported by GitHub API for commit <code>{(data.verification?.head_sha || '').slice(0, 7) || 'unknown'}</code>.
             </div>
           ) : (
             data.verification.checks.map((chk, idx) => (
@@ -864,7 +886,12 @@ export default function ReviewDossierWidget() {
 
       {/* Tab 4: Evidence Ledger & Limits */}
       {activeTab === 'ledger' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+        <div
+          id="panel-ledger"
+          role="tabpanel"
+          aria-labelledby="tab-ledger"
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}
+        >
           {/* Verified Facts */}
           <div
             style={{
@@ -885,7 +912,7 @@ export default function ReviewDossierWidget() {
                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               }}
             >
-              ✓ Verified Facts (GitHub API)
+              [VERIFIED] GitHub API Facts
             </h4>
             <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '12.5px', color: colors.textPrimary, lineHeight: 1.6 }}>
               {data.confidence_and_limits.verified_facts.map((fact, idx) => (
@@ -914,7 +941,7 @@ export default function ReviewDossierWidget() {
                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               }}
             >
-              ⚠ Missing Evidence & Limitations
+              [BOUNDARIES] Missing Evidence & Limitations
             </h4>
             {data.evidence_coverage.missing_or_unavailable.length === 0 ? (
               <p style={{ margin: 0, fontSize: '12.5px', color: colors.textSecondary }}>
@@ -949,7 +976,7 @@ export default function ReviewDossierWidget() {
                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               }}
             >
-              🔗 Explicit Referenced Issues & PRs
+              [REFERENCES] Referenced Issues & PRs
             </h4>
             {data.linked_context.explicit_issue_references.length === 0 ? (
               <p style={{ margin: 0, fontSize: '12.5px', color: colors.textSecondary }}>
@@ -991,7 +1018,7 @@ export default function ReviewDossierWidget() {
         }}
       >
         <span>PRPilot v1.0.0 · Powered by NitroStack MCP</span>
-        <span>Assembled at {new Date(data.verification.collected_at).toLocaleTimeString()}</span>
+        <span>Assembled at {data.verification?.collected_at ? new Date(data.verification.collected_at).toLocaleTimeString() : 'N/A'}</span>
       </div>
     </div>
   );
