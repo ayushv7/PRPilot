@@ -1,5 +1,5 @@
 import { McpApp, Module, ConfigModule } from '@nitrostack/core';
-import { CalculatorModule } from './modules/calculator/calculator.module.js';
+import { PullRequestModule } from './modules/pull-request/pull-request.module.js';
 import { SystemHealthCheck } from './health/system.health.js';
 
 /**
@@ -20,10 +20,10 @@ import { SystemHealthCheck } from './health/system.health.js';
 })
 @Module({
   name: 'app',
-  description: 'Root application module',
+  description: 'PRPilot - Evidence-Driven Pull Request Intelligence',
   imports: [
     ConfigModule.forRoot(),
-    CalculatorModule
+    PullRequestModule
   ],
   providers: [
     // Health Checks
