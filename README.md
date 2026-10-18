@@ -1,112 +1,137 @@
-# PRPilot — Evidence-Driven Pull Request Intelligence
+# PRPilot
 
-> **"Know where to look before you review."**
+> **Evidence-Driven Pull Request Intelligence for AI Assistants**
 
-PRPilot is an MCP (Model Context Protocol) server built with the official [NitroStack](https://nitrostack.ai) framework. It streamlines pull-request review by retrieving objective GitHub facts, analyzing file risk heuristics, verifying actual CI test results, tracing explicit issue references, and producing a structured, evidence-linked **Review Dossier**.
+PRPilot is an [MCP (Model Context Protocol)](https://nitrostack.ai) server that extends AI assistants — like Claude, Cursor, and any MCP-compatible client — with real-world pull request intelligence. Built and deployed on [NitroStack](https://nitrostack.ai), the fastest way to build, deploy, and share MCP apps.
 
----
-
-## The Problem
-
-Code reviewers routinely lose context across fragmented GitHub views:
-- **Diff volume & fatigue:** Sifting through hundreds of lines across dozens of files without knowing where core architectural changes lie.
-- **Hidden risk boundaries:** Sensitive changes to authentication, configuration, data validation, or database migrations mixed in with routine changes.
-- **Unverified CI assumptions:** Assuming tests passed when CI was actually never triggered, pending, or failed.
-- **Disconnected requirements:** Reviewing code in isolation from the original issue report or acceptance criteria.
-
-PRPilot investigates public GitHub pull requests, extracts verifiable facts, maps out architectural change areas, flags investigation signals, and generates a prioritized reviewer route.
+[![NitroStack](https://img.shields.io/badge/NitroStack-MCP%20Server-6366f1.svg)](https://nitrostack.ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![MCP Protocol](https://img.shields.io/badge/MCP-2026--07--28-emerald.svg)](https://modelcontextprotocol.io)
+[![Next.js Widget](https://img.shields.io/badge/Widget-Next.js%2014-black.svg)](https://nextjs.org)
 
 ---
 
-## Architecture
+## Table of Contents
 
-```mermaid
-graph TD
-    User["Developer / AI Client<br/>(NitroStudio, Cursor, Gemini)"]
-    MCP["PRPilot MCP Server<br/>(@nitrostack/core on Node.js)"]
-    
-    subgraph "Exposed MCP Tools"
-        T1["inspect_pull_request"]
-        T2["build_change_map"]
-        T3["inspect_verification_evidence"]
-        T4["trace_related_context"]
-        T5["assemble_review_dossier"]
-    end
+- [Overview](#overview)
+- [What is MCP?](#what-is-mcp)
+- [Features](#features)
+- [Live Demo](#live-demo)
+- [Connect to an MCP Client](#connect-to-an-mcp-client)
+- [Core MCP Tools & Primitives](#core-mcp-tools--primitives)
+- [Interactive Review Dossier Widget](#interactive-review-dossier-widget)
+- [Getting Started](#getting-started)
+- [Automated Testing](#automated-testing)
+- [Deploy Your Own MCP App](#deploy-your-own-mcp-app)
+- [Explore More MCP Apps](#explore-more-mcp-apps)
+- [FAQ](#faq)
+- [Keywords](#keywords)
+- [License](#license)
 
-    subgraph "Engine & Services"
-        GH["GitHubService<br/>(Public REST API v3, Rate-Limit Aware)"]
-        Analyzer["HeuristicsService<br/>(Categorization & Risk Heuristics)"]
-        Dossier["DossierService<br/>(Deterministic Synthesis & Reviewer Route)"]
-    end
+---
 
-    subgraph "Interactive UI"
-        Widget["Review Dossier Widget<br/>(NitroStack Next.js / React)"]
-    end
+## Overview
 
-    User <-->|MCP Protocol (STDIO / SSE)| MCP
-    MCP --> T1 & T2 & T3 & T4 & T5
-    T1 & T2 & T3 & T4 --> GH
-    T2 --> Analyzer
-    T5 --> Dossier
-    T5 -.->|@Widget('review-dossier')| Widget
+Reviewing modern software pull requests is exhausting. Engineers lose hours sifting through thousands of lines of code diffs, tracking down whether CI actually ran, and verifying whether sensitive security boundaries were altered. Generic AI summaries often hallucinate or skim over critical risks.
+
+**PRPilot** changes that. Using the official **NitroStack TypeScript SDK**, PRPilot retrieves ground-truth GitHub facts, categorizes modified files into architectural tiers, runs transparent risk heuristics, checks live CI pipeline statuses, and traces related issues into a structured, evidence-backed **Review Dossier**.
+
+Instead of guessing, PRPilot:
+- **Prioritizes areas that deserve human attention** (security, auth, migrations, untested logic).
+- **Generates an actionable, ordered 3-to-5 step reviewer route** linked directly to file diff evidence.
+- **Distinguishes confirmed facts from potential risks** with honest assessments (e.g. explicitly warning when CI checks are absent instead of assuming tests passed).
+
+---
+
+## What is MCP?
+
+The **Model Context Protocol (MCP)** is an open standard that lets AI assistants securely connect to external tools, data sources, and real-world services. Instead of being limited to static training data, an AI model can call MCP servers to fetch live data, run actions, and integrate with engineering systems.
+
+PRPilot is an MCP server built for code review workflows. Learn more about building and shipping MCP apps at [nitrostack.ai](https://nitrostack.ai).
+
+---
+
+## Features
+
+- 🔌 **MCP-Native:** Works seamlessly with any MCP-compatible client (Claude Desktop, Cursor, NitroStudio, ChatGPT).
+- 🛠️ **5 Granular Tools + Resource + Prompt:** Exposes dedicated tools for metadata, file mapping, CI evidence, and full dossier synthesis.
+- 📊 **Interactive Next.js Widget:** Renders an editorial charcoal Review Dossier UI directly in supporting canvases.
+- 🛡️ **Zero-Hallucination Integrity:** Distinguishes verified facts from heuristics and explicitly reports missing data.
+- ⚡ **Live on NitroCloud:** Hosted, production-ready, and instantly shareable.
+- 🔐 **Secure by Design:** Read-only analysis; credentials stay safely in environment variables.
+
+---
+
+## Live Demo
+
+- 🚀 **Live MCP SSE Endpoint:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse)
+- 🌐 **Live Documentation & Server:** [`https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/`](https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/)
+- 🎨 **Local Interactive Widget:** [`http://localhost:3001/review-dossier`](http://localhost:3001/review-dossier)
+
+Point your MCP client at the SSE endpoint above to try it instantly without local installation!
+
+---
+
+## Connect to an MCP Client
+
+### Claude Desktop & Cursor
+
+Add PRPilot to your MCP client configuration file (e.g., `claude_desktop_config.json` or `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "prpilot": {
+      "url": "https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse"
+    }
+  }
+}
 ```
 
----
+### NitroStudio (Desktop IDE)
 
-## Core MCP Tools
-
-All tools accept a validated input schema: `{ owner: string, repo: string, pull_number: number }`.
-
-1. **`inspect_pull_request`**
-   - Retrieves pull request metadata: title, description, author, branch targets, commit SHA, timestamps, and overall file statistics.
-   - Accurately reports non-existent PRs and rate limits.
-
-2. **`build_change_map`**
-   - Categorizes changed files into: `Application Logic`, `Tests`, `Configuration & Dependencies`, `Documentation`, and `Other`.
-   - Runs transparent heuristics on security-sensitive paths (`SIG_AUTH_SECURITY`, `SIG_DB_MIGRATION`, `SIG_CONFIG_ENV`, `SIG_DEPENDENCY_CHANGE`, `SIG_INPUT_VALIDATION`, `SIG_UNTESTED_LOGIC`, `SIG_HIGH_CHURN`).
-   - Enforces diff bounding (2,000 character patch excerpts per file, 100 files max) and records truncation honestly.
-
-3. **`inspect_verification_evidence`**
-   - Retrieves real commit check-runs and statuses for the PR head commit SHA.
-   - Distinguishes passing, failing, pending, and **missing/absent** checks (`no_checks_found`), never assuming an empty check list means tests pass.
-
-4. **`trace_related_context`**
-   - Parses explicit issue and PR references (`#123`, `gh-45`, URLs) from descriptions and commit messages.
-   - Fetches issue titles, states, and links to ground the review in historical context.
-
-5. **`assemble_review_dossier`**
-   - Unifies all collected evidence into a cohesive, structured Review Dossier.
-   - Produces a prioritized 3–5 step reviewer route with direct file links and rationale.
-   - Powers the interactive **Review Dossier Widget** via `@Widget('review-dossier')`.
+1. Open **NitroStudio**.
+2. Click **Add Server** $\rightarrow$ **Other Project** $\rightarrow$ **HTTP**.
+3. Enter the URL:
+   ```text
+   https://prpilot-6ad4acd1-ayush-heapify-global-community.app.nitrocloud.ai/sse
+   ```
+4. Click **Connect**. All 5 tools, resources, and prompts will be registered immediately.
 
 ---
 
-## MCP Resources & Prompts
+## Core MCP Tools & Primitives
 
-In addition to tools, PRPilot implements the full MCP specification with native resources and prompts:
+All tools accept a typed schema: `{ owner: string, repo: string, pull_number: number, github_token?: string }`.
 
-- **Resource `prpilot://heuristics/catalog`:** Exposes the reference catalog of heuristic risk codes, severities, and boundary detection rules.
-- **Prompt `review_pull_request`:** A pre-configured instruction template for AI agents accepting `{ owner, repo, pull_number }` to drive an evidence-backed pull request review.
-
----
-
-## Review Dossier Widget
-
-Built with `@nitrostack/widgets` using Next.js and React:
-- **Design:** Editorial technical aesthetic using a restrained graphite/charcoal palette (`#0d1117`, `#161b22`, `#21262d`), subtle borders, and monospace metadata for hashes, branches, and line numbers.
-- **Interactive Tabs:**
-  - **Reviewer Route:** Concrete 3 to 5 step guided path leading the reviewer from high-risk boundaries to test coverage and CI results.
-  - **Investigation Signals:** Prioritized security, migration, and untested logic warnings.
-  - **CI & Checks:** Real check runs and commit statuses with direct links.
-  - **Evidence Ledger:** Clear separation between verified facts, heuristic signals, and unverified hypotheses.
+| Tool / Primitive | Type | Description |
+| :--- | :--- | :--- |
+| **`assemble_review_dossier`** | Tool (`@Widget`) | **Flagship Tool:** Synthesizes change intent, categorized map, risk signals, CI evidence, and 3–5 step reviewer route. Linked to the visual Next.js widget. |
+| **`inspect_pull_request`** | Tool | Fast metadata extraction (title, description, author, branch targets, commit SHAs, file counts). |
+| **`build_change_map`** | Tool | Categorizes changed files (logic, tests, configs, docs) and flags sensitive boundary signals (`SIG_AUTH_SECURITY`, `SIG_DB_MIGRATION`, `SIG_UNTESTED_LOGIC`). |
+| **`inspect_verification_evidence`**| Tool | Checks live GitHub Actions and commit check-runs. Honestly identifies missing CI checks (`no_checks_found`). |
+| **`trace_related_context`** | Tool | Parses explicit issue/PR references (`#123`, `fixes #456`) and fetches their live titles and statuses. |
+| **`prpilot://heuristics/catalog`** | Resource | Machine-readable catalog of all risk rules, boundary regexes, and severity scoring weights. |
+| **`review_pull_request`** | Prompt | Pre-configured prompt template guiding LLMs through systematic, evidence-driven code reviews. |
 
 ---
 
-## Quick Start
+## Interactive Review Dossier Widget
+
+Built with `@nitrostack/widgets` using **Next.js 14** and **React**:
+- **Risk Score & Meter:** Overall computed risk level (`low`, `medium`, `high`) based on touched architectural boundaries.
+- **Categorized File Tree:** Clean visual breakdown separating core logic from test files and configurations.
+- **Interactive Reviewer Route:** Step-by-step checklist with interactive checkboxes guiding the engineer from high-risk paths to tests.
+- **Honest CI Status:** Direct check-run status cards linking to pipeline runs.
+
+---
+
+## Getting Started
 
 ### Prerequisites
 - Node.js 20.x or higher
 - npm 9+
+- An MCP-compatible client (NitroStudio, Claude Desktop, Cursor)
 
 ### Installation
 ```bash
@@ -114,20 +139,20 @@ Built with `@nitrostack/widgets` using Next.js and React:
 git clone https://github.com/ayushv7/PRPilot.git
 cd PRPilot
 
-# Install root & widget dependencies
+# Install all dependencies (root & widgets)
 npm run install:all
 ```
 
-### Environment Configuration
-Copy `.env.example` to `.env`:
+### Configuration
+Copy the example environment file:
 ```bash
 cp .env.example .env
 ```
-*(Optional: add `GITHUB_TOKEN` to increase GitHub API rate limits from 60 to 5,000 requests/hr).*
+*(Optional: Add a `GITHUB_TOKEN` in `.env` to increase GitHub API rate limits from 60 to 5,000 requests/hr).*
 
 ### Running Locally
 ```bash
-# Start MCP server and Widget dev server (hot-reload)
+# Start both MCP server (port 3000) and Widget server (port 3001) with hot-reload
 npm run dev
 
 # Or build and run production server
@@ -135,41 +160,60 @@ npm run build
 npm start
 ```
 
-### Running Automated Tests
+---
+
+## Automated Testing
+
+PRPilot includes a comprehensive test suite covering API error handling, heuristics, truncation limits, prompt injection safety, and live public PR smoke tests:
+
 ```bash
 npm test
 ```
-The test suite includes 14 tests covering GitHub API error shapes (404, 403 rate limits), file classification, diff truncation, honest absent-CI reporting, prompt injection safety, and a live smoke test against GitHub's public API.
+
+All 16 unit and smoke tests execute with `tsx --test`.
 
 ---
 
-## Testing in NitroStudio
+## Deploy Your Own MCP App
 
-1. Launch [NitroStudio](https://nitrostack.ai/studio).
-2. Open the project directory (`PRPilot`).
-3. NitroStudio connects automatically over stdio, discovering all 5 MCP tools and registering the widget preview.
-4. In the **AI Chat Interface**, paste the investigation prompt:
-   ```text
-   Investigate facebook/react pull request #31000. Build the Review Dossier, explain which changes need the most careful human review, check the actual CI evidence, trace explicit related issues, and give me a prioritized review route. Cite the evidence for every important finding and tell me what you could not verify.
-   ```
-5. Observe the autonomous tool invocations and inspect the rendered Review Dossier widget.
+Want to build and ship an MCP server like this one? [NitroStack](https://nitrostack.ai) lets you create, deploy, and host MCP apps in minutes — no infrastructure to manage.
+
+👉 **Start building:** [https://nitrostack.ai](https://nitrostack.ai)
 
 ---
 
-## Deployment to NitroCloud
+## Explore More MCP Apps
 
-PRPilot is packaged for deployment to [NitroCloud](https://nitrocloud.ai):
-
-```bash
-# Create an optimized project archive
-npx nitrostack-cli pack
-```
-This produces `prpilot.zip` excluding build artifacts, dependencies, and secrets. Deploy by importing the repository or uploading the package archive directly on the NitroCloud dashboard.
+- 🌙 **Discover & share:** Join the community on [r/mcptothemoon](https://www.reddit.com/r/mcptothemoon/)
+- 🧰 **Browse the catalog:** Explore more apps on [NitroStack Apps](https://nitrostack.ai/apps)
 
 ---
 
-## Security & Integrity Principles
+## FAQ
 
-- **Read-Only MVP:** PRPilot does not modify repositories, post automated comments, approve pull requests, or merge code. The human reviewer remains in control.
-- **Untrusted Input Protection:** All PR content (titles, bodies, commit messages) is treated strictly as data strings and isolated from execution flows.
-- **Honest Evidence:** Missing CI or unavailable data is explicitly flagged as unknown/missing. PRPilot does not hallucinate test results or approvals.
+**What is an MCP server?**  
+An MCP server implements the Model Context Protocol to expose tools, resources, and prompts that AI assistants can call. It lets an AI model take real actions and access live data.
+
+**What does PRPilot do?**  
+PRPilot is an evidence-driven code review intelligence tool that analyzes pull requests, calculates architectural risk, and generates a structured, prioritized review route.
+
+**Which AI clients does this work with?**  
+Any MCP-compatible client, including Claude Desktop, Cursor, and NitroStudio.
+
+**Can PRPilot review private repositories?**  
+Yes! Provide a GitHub Personal Access Token (`GITHUB_TOKEN` in `.env` or passed via the `github_token` tool argument) with read access to your private repository.
+
+**Can it inspect already-merged or closed PRs?**  
+Yes! GitHub preserves full pull request diffs, commits, and comments permanently. PRPilot seamlessly inspects open, merged, or closed PRs for post-mortems and compliance audits.
+
+---
+
+## Keywords
+
+PRPilot · MCP · Model Context Protocol · MCP server · MCP app · AI tools · AI agents · LLM tools · Claude MCP · Cursor MCP · NitroStack · deploy MCP server · build MCP app · GitHub pull request · code review intelligence · developer tools
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Ayush Verma ([ayushv7](https://github.com/ayushv7))
